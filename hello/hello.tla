@@ -1,6 +1,6 @@
 ------------------------------ MODULE hello -------------------------------
 
-EXTENDS Naturals
+EXTENDS Naturals, Reals
 
 Double(x) == 2*x
 
@@ -32,7 +32,16 @@ Choice(P(_), Q(_)) ==
        /\ ( \A x: P(x)) <=> P(CHOOSE x: ~ P(x)) (* forall *)
        /\ ( \A x: P(x) <=> Q(x)) => (CHOOSE x: P(x)) = (CHOOSE x: Q(x)) (* rigth-uniqueness *)
 
+ChooseOne(S, P(_)) == CHOOSE x \in S: P(x) /\ \A y \in S: P(y) => x = y
+AnyOf(S) == CHOOSE x \in S: TRUE
 
+(* Define Primes *)
+Divides(p,n) == \E q \in Int : p*q = n
+Prime(n) == n > 1 /\ \A p \in Nat: Divides(p,n) => p = n \/ p = 1
+
+DivisorsOf(n) == {p \in Int: Divides(p,n)}
+SetMax(S) == CHOOSE x \in S: \A y \in S: x >= y
+GCD(m,n) == SetMax(DivisorsOf(m) \cap DivisorsOf(n))
 
 
 =============================================================================
