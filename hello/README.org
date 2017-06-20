@@ -1,0 +1,125 @@
+---- BEGIN INSTALLATION NOTES ----
+
+# install TLAPS from linux tar
+mkdir $HOME/tlaps
+cd tlaps
+curl -LO https://tla.msr-inria.inria.fr/tlaps/dist/current/tlaps-1.4.3.tar.gz
+tar -zxf *.tar.gz
+
+
+# zenon
+cd tlaps-1.4.3/zenon
+./configure --prefix $HOME
+make
+make install
+which zenon
+zenon --help
+cd ..
+
+
+# Poly/ML (for Isabelle 2011-1)
+# `polyml` in apt is too new for Isabelle 2011-1
+# apt-get install polyml
+# Isabelle 2011-1 requires >= 5.2.1 in its README,
+# but that version raises errors
+# download from:
+https://sourceforge.net/projects/polyml/files/polyml/5.4.0
+tar -zxf polyml.5.4.tar.gz
+cd polyml.5.4
+./configure --prefix=$HOME/tlaps/polyml/
+make -j4
+make install
+which poly
+poly --version
+add $HOME/tlaps/polyml/bin to $PATH
+
+
+# Isabelle 2011-1
+# download from:
+http://isabelle.in.tum.de/website-Isabelle2011-1/download.html
+tar -xzf Isabelle2011-1.tar.gz
+cd Isabelle2011-1
+#
+# copy comment.sty` under `lib/texinputs`
+# from here: https://lists.cam.ac.uk/mailman/htdig/cl-isabelle-users/2014-January/msg00167.html
+#
+# in `etc/settings` set:
+# ML_HOME="$HOME/tlaps/polyml/bin"
+#
+# comment the outer conditional in `lib/scripts/getsettings`:
+# if [ -z "$ISABELLE_SETTINGS_PRESENT" ]
+# then
+# fi
+# https://lists.cam.ac.uk/pipermail/cl-isabelle-users/2016-February/msg00107.html
+#
+# add at the top of `lib/Tools/browser`
+# source $HOME/tlaps/Isabelle2011-1/lib/scripts/getsettings
+#
+./build
+# you can also `cd src/Pure; isabelle make` but docs won't build later
+add $HOME/tlaps/Isabelle2011-1/bin/ to $PATH
+
+
+# compile TLA+ formalization in Isabelle
+cd isabelle
+make
+cd ..
+
+
+# compile TLAPS
+apt-get install ocaml ocaml-batteries-included ocaml-native-compilers
+ocaml -version
+cd tlapm
+./configure --prefix $HOME
+make all
+make install
+which tlapm
+tlapm --config
+cd examples/cantor
+tlapm -C --verbose Cantor1.tla
+
+
+# install more backends
+
+## z3
+apt-get install z3 spass
+
+
+## ls4 (propositional temporal prover)
+git clone git@github.com:quickbeam123/ls4.git
+cd ls4/core
+make
+cp ls4 $HOME/bin
+
+
+## translator to input format of `ls4`
+curl -LO http://cgi.csc.liv.ac.uk/~konev/software/trp++/translator/translate.tar.bz2
+tar xvfj translate.tar.bz2
+cd translate/
+./build.sh
+cp translate $HOME/bin/ptl_to_trp
+
+
+## CVC3
+# http://www.cs.nyu.edu/acsys/cvc3/doc/INSTALL.html
+apt-get install bison flex libgmp-dev
+curl -LO http://www.cs.nyu.edu/acsys/cvc3/releases/2.4.1/cvc3-2.4.1.tar.gz
+tar -xzf cvc3*.tar.gz
+cd cvc3*
+./configure --prefix=$HOME/cvc3
+make
+cd test
+make
+bin/test
+make install
+
+
+# TLA+ tools
+curl -LO https://tla.msr-inria.inria.fr/tlatoolbox/dist/tla.zip
+unzip tla.zip -d $HOME/tlatools
+cd github
+git clone git@github.com:joewilliams/tla_tools
+mkdir /tmp/tla2tex
+mkdir /tmp/tlc
+
+==== END INSTALLATION NOTES ====
