@@ -23,10 +23,10 @@ The semigroup, monoid and group.
 *)
 
 Semigroup(S, _ \cdot _) == /\ \A a,b \in S: a \cdot b \in S (* Closure *)
-                      /\ \A a,b,c \in S: (a \cdot b) \cdot c = a \cdot (b \cdot c) (* Associativity *)
+                      /\ \A a,b,c \in S: ((a \cdot b) \cdot c) = (a \cdot (b \cdot c)) (* Associativity *)
 
 Monoid(M, _ \cdot _) == /\ Semigroup(M, \cdot)
-                   /\ \E id \in M: \A a \in M: /\ id \cdot a = a /\ a \cdot id = a (* Identity element *)
+                   /\ \E id \in M: \A a \in M: /\ (id \cdot a) = a /\ (a \cdot id) = a (* Identity element *)
 
 Group(G, _ \cdot _) == /\ Monoid(G, \cdot)
                   /\ \E id \in G: \A a \in G: /\ id \cdot a = a /\ a \cdot id = a
@@ -56,5 +56,11 @@ THEOREM \A n \in Nat \ {0}: LET a \sim b == a % n = b % n (* Eq mod n*)
                              a (+) b == ClassOf(AnyOf(a) + AnyOf(b), Int, \sim) (* Sum on equiv class *)
                          IN AbelianGroup(Quotient(Int, \sim), (+))
 
+THEOREM UniqueIdentity ==
+        ASSUME NEW M, NEW _ \cdot _, Monoid(M, \cdot)
+        PROVE \A x,y \in M: /\ \A a \in M: (x \cdot a) = a /\ (a \cdot x) = a
+                         /\ \A a \in M: (y \cdot a) = a /\ (a \cdot y) = a
+                => x = y
+    BY DEF Monoid
 
 =============================================================================

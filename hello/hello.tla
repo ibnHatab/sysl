@@ -41,7 +41,21 @@ Prime(n) == n > 1 /\ \A p \in Nat: Divides(p,n) => p = n \/ p = 1
 
 DivisorsOf(n) == {p \in Int: Divides(p,n)}
 SetMax(S) == CHOOSE x \in S: \A y \in S: x >= y
-GCD(m,n) == SetMax(DivisorsOf(m) \cap DivisorsOf(n))
+GCDp(m,n) == SetMax(DivisorsOf(m) \cap DivisorsOf(n))
+
+RECURSIVE GCD(_,_)
+GCD(m,n) == CASE m = n -> m
+             [] m > n -> GCD(m-n,n)
+             [] m < n -> GCD(n-m,m)
+CONSTANTS M,N
+VARIABLES x,y
+
+Init == x = M /\ y = N
+Next == \/ x > y /\ x' = x - y /\ y' = y
+       \/ x < y /\ x' = x     /\ y'= y - x
+
+
+
 
 
 =============================================================================
