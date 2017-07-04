@@ -1,11 +1,9 @@
 
 
+SRCS = hello.tla Data.tla StateM.tla Fact.tla Stack.tla InternalStack.tla
 
 
-SRCS = hello.tla Data.tla
 OBJS = ${SRCS:.tla=.tlaps/fingerprints}
-
-#.PHONY: ${OBJS}
 
 .SUFFIXES:
 .SUFFIXES: .tlo .tlaps/fingerprints
